@@ -1,12 +1,22 @@
-import React from 'react';
-import { ChartLineUp, ClipboardText, ChartBar, GearSix, SignOut, List, X } from '@phosphor-icons/react';
-import { BrandMark, BRAND } from './ui';
+import React from "react";
+import {
+  ChartLineUp,
+  ClipboardText,
+  ChartBar,
+  GearSix,
+  SignOut,
+  List,
+  X,
+  SpeakerHigh,
+  SpeakerSlash,
+} from "@phosphor-icons/react";
+import { BrandMark, BRAND } from "./ui";
 
 export const NAV_ITEMS = [
-  { id: 'pump_dump', label: 'Pump / Dump', icon: ChartLineUp },
-  { id: 'poa', label: 'POA', icon: ClipboardText },
-  { id: 'markets', label: 'Markets', icon: ChartBar },
-  { id: 'settings', label: 'Settings', icon: GearSix },
+  { id: "pump_dump", label: "Pump / Dump", icon: ChartLineUp },
+  { id: "poa", label: "POA", icon: ClipboardText },
+  { id: "markets", label: "Markets", icon: ChartBar },
+  { id: "settings", label: "Settings", icon: GearSix },
 ];
 
 function Brand() {
@@ -32,17 +42,22 @@ function NavList({ activeNav, onNavigate }) {
           <button
             key={id}
             onClick={() => onNavigate(id)}
-            aria-current={active ? 'page' : undefined}
+            aria-current={active ? "page" : undefined}
             className={`group relative w-full flex items-center gap-3 h-10 px-3 rounded-xl text-[14px] transition-colors duration-150 ${
-              active ? 'bg-white/[0.05] text-snow' : 'text-fog hover:text-snow hover:bg-white/[0.025]'
+              active
+                ? "bg-white/[0.05] text-snow"
+                : "text-fog hover:text-snow hover:bg-white/[0.025]"
             }`}
           >
             <span
               className={`absolute left-0 top-1/2 -translate-y-1/2 w-[3px] rounded-full bg-mint transition-all duration-150 ${
-                active ? 'h-5 opacity-100' : 'h-0 opacity-0'
+                active ? "h-5 opacity-100" : "h-0 opacity-0"
               }`}
             />
-            <Icon weight={active ? 'fill' : 'duotone'} className={`w-[18px] h-[18px] ${active ? 'text-mint' : ''}`} />
+            <Icon
+              weight={active ? "fill" : "duotone"}
+              className={`w-[18px] h-[18px] ${active ? "text-mint" : ""}`}
+            />
             {label}
           </button>
         );
@@ -51,13 +66,56 @@ function NavList({ activeNav, onNavigate }) {
   );
 }
 
-function SessionBox() {
+function SoundToggle({ enabled, onToggle }) {
+  const Icon = enabled ? SpeakerHigh : SpeakerSlash;
+
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-pressed={enabled}
+      aria-label={enabled ? "Turn signal sounds off" : "Turn signal sounds on"}
+      title={enabled ? "Mute signal alerts" : "Enable signal alerts"}
+      className={`group w-full h-10 px-3 rounded-xl border flex items-center justify-between transition-all ${
+        enabled
+          ? "border-mint/20 bg-mint/[0.06] text-snow hover:bg-mint/[0.09]"
+          : "border-white/[0.06] bg-white/[0.025] text-fog hover:text-snow hover:border-white/10"
+      }`}
+    >
+      <span className="flex items-center gap-3 text-[13px] font-medium">
+        <Icon
+          weight="fill"
+          className={`w-[18px] h-[18px] ${enabled ? "text-mint" : "text-fog-2"}`}
+        />
+        Sound
+      </span>
+      <span
+        className={`relative w-8 h-[18px] rounded-full transition-colors ${
+          enabled ? "bg-mint" : "bg-white/10"
+        }`}
+        aria-hidden="true"
+      >
+        <span
+          className={`absolute top-[3px] w-3 h-3 rounded-full shadow-sm transition-all ${
+            enabled ? "left-[17px] bg-ink" : "left-[3px] bg-fog"
+          }`}
+        />
+      </span>
+    </button>
+  );
+}
+
+function SessionBox({ soundEnabled, onToggleSound }) {
   return (
     <div className="space-y-3">
+      <SoundToggle enabled={soundEnabled} onToggle={onToggleSound} />
       <div className="cw-panel cw-glow cw-glow-soft p-3.5">
         <div className="text-[10px] text-fog-2">Product session</div>
         <div className="mt-0.5 text-[14px] font-medium text-snow">Trader</div>
-        <button onClick={() => window.location.reload()} className="cw-btn mt-3 w-full !h-9 !text-[12px]">
+        <button
+          onClick={() => window.location.reload()}
+          className="cw-btn mt-3 w-full !h-9 !text-[12px]"
+        >
           <SignOut weight="duotone" className="w-4 h-4" />
           Sign out
         </button>
@@ -67,13 +125,22 @@ function SessionBox() {
           <span className="w-1.5 h-1.5 rounded-full bg-mint" />
           Public data
         </div>
-        <p className="mt-1 text-[10px] text-fog-2 leading-snug">Account-authorized. No exchange API key. No orders.</p>
+        <p className="mt-1 text-[10px] text-fog-2 leading-snug">
+          Account-authorized. No exchange API key. No orders.
+        </p>
       </div>
     </div>
   );
 }
 
-export default function Sidebar({ activeNav, setActiveNav, mobileOpen, setMobileOpen }) {
+export default function Sidebar({
+  activeNav,
+  setActiveNav,
+  mobileOpen,
+  setMobileOpen,
+  soundEnabled,
+  onToggleSound,
+}) {
   const navigate = (id) => {
     setActiveNav(id);
     setMobileOpen(false);
@@ -87,7 +154,7 @@ export default function Sidebar({ activeNav, setActiveNav, mobileOpen, setMobile
           </div>
           <NavList activeNav={activeNav} onNavigate={navigate} />
         </div>
-        <SessionBox />
+        <SessionBox soundEnabled={soundEnabled} onToggleSound={onToggleSound} />
       </aside>
 
       <div className="lg:hidden flex items-center justify-between h-14 px-4 border-b border-white/[0.05] bg-[#09090c] shrink-0">
@@ -103,18 +170,26 @@ export default function Sidebar({ activeNav, setActiveNav, mobileOpen, setMobile
 
       {mobileOpen && (
         <div className="lg:hidden fixed inset-0 z-50">
-          <button className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileOpen(false)} aria-label="Close navigation" />
+          <button
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setMobileOpen(false)}
+            aria-label="Close navigation"
+          />
           <aside className="absolute left-0 top-0 bottom-0 w-[264px] bg-[#09090c] border-r border-white/[0.06] p-4 flex flex-col justify-between tab-transition">
             <div className="space-y-7">
               <div className="flex items-center justify-between">
                 <Brand />
-                <button onClick={() => setMobileOpen(false)} className="w-8 h-8 rounded-lg flex items-center justify-center text-fog" aria-label="Close navigation">
+                <button
+                  onClick={() => setMobileOpen(false)}
+                  className="w-8 h-8 rounded-lg flex items-center justify-center text-fog"
+                  aria-label="Close navigation"
+                >
                   <X weight="bold" className="w-4 h-4" />
                 </button>
               </div>
               <NavList activeNav={activeNav} onNavigate={navigate} />
             </div>
-            <SessionBox />
+            <SessionBox soundEnabled={soundEnabled} onToggleSound={onToggleSound} />
           </aside>
         </div>
       )}
