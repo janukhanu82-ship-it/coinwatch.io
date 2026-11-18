@@ -1,0 +1,11 @@
+{
+  "title": "coinwach — Dashboard",
+  "description": "coinwach dashboard: live perpetuals pump/dump scanner, Plans of Attack and multi-exchange market metrics.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
